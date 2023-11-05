@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mingoli_player/VideoPlayer.dart';
+import 'package:mingoli_player/VideoPlayerWidget.dart';
 import 'package:video_player/video_player.dart';
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key, required this.title});
   final String title;
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +17,10 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const VideoPlayerWidget(),
-          ],
+      body: Container(
+        child: Container(
+          child: VideoPlayerWidget(),
+
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

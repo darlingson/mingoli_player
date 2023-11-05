@@ -1,68 +1,110 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
-void main() {
-  runApp(const MyApp());
+main(){
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
+class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Home(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
+class Home extends StatefulWidget{
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _HomeState createState() => _HomeState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomeState extends State<Home> {
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
+  late VideoPlayerController controller;
+
+  @override
+  void initState() {
+    loadVideoPlayer();
+    super.initState();
+  }
+
+  loadVideoPlayer(){
+    controller = VideoPlayerController.asset('assets/videos/video.mp4');
+    controller.addListener(() {
+      setState(() {});
     });
+    controller.initialize().then((value){
+      setState(() {});
+    });
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text("Play Video from Assets/URL"),
+        backgroundColor: Colors.redAccent,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
+      body: Container(
+          child: Column(
+              children:[
+                AspectRatio(
+                  aspectRatio: controller.value.aspectRatio,
+                  child: VideoPlayer(controller),
+                ),
+
+                Container( //duration of video
+                  child: Text("Total Duration: " + controller.value.duration.toString()),
+                ),
+
+                Container(
+                    child: VideoProgressIndicator(
+                        controller,
+                        allowScrubbing: true,
+                        colors:VideoProgressColors(
+                          backgroundColor: Colors.redAccent,
+                          playedColor: Colors.green,
+                          bufferedColor: Colors.purple,
+                        )
+                    )
+                ),
+
+                Container(
+                  child: Row(
+                    children: [
+                      IconButton(
+                          onPressed: (){
+                            if(controller.value.isPlaying){
+                              controller.pause();
+                            }else{
+                              controller.play();
+                            }
+
+                            setState(() {
+
+                            });
+                          },
+                          icon:Icon(controller.value.isPlaying?Icons.pause:Icons.play_arrow)
+                      ),
+
+                      IconButton(
+                          onPressed: (){
+                            controller.seekTo(Duration(seconds: 0));
+
+                            setState(() {
+
+                            });
+                          },
+                          icon:Icon(Icons.stop)
+                      )
+                    ],
+                  ),
+                )
+              ]
+          )
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

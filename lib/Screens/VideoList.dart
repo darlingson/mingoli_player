@@ -21,8 +21,18 @@ class _VideoListScreenState extends State<VideoListScreen> {
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
 
+      Directory dir = Directory(appDocPath);
+
+      // Check if the directory exists
+      bool dirExists = await dir.exists();
+
+      // If the directory doesn't exist, create it
+      if (!dirExists) {
+        await dir.create();
+      }
+
       // Assuming video files have a specific extension like mp4, you can adjust this accordingly
-      List<FileSystemEntity> videoFiles = Directory(appDocPath).listSync(
+      List<FileSystemEntity> videoFiles = dir.listSync(
         recursive: true,
         followLinks: false,
       ).where((entity) => entity.path.endsWith('.mp4')).toList();
